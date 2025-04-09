@@ -1,0 +1,104 @@
+{
+  "nodes": [
+    {
+      "name": "TwoBoneIK",
+      "type": "TwoBoneIK",
+      "id": 2202220564544,
+      "position": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "sockets": {
+        "input": {
+          "scale_in": {
+            "type": "any",
+            "associated_code": "connectionsIKarms[0]",
+            "connections": []
+          },
+          "shoulderIK_in": {
+            "type": "any",
+            "associated_code": "connectionsIKarms[1]",
+            "connections": []
+          },
+          "poleVectorIK_in": {
+            "type": "any",
+            "associated_code": "connectionsIKarms[2]",
+            "connections": []
+          },
+          "shoulderFK_in": {
+            "type": "any",
+            "associated_code": "connectionsIKarms[3]",
+            "connections": []
+          }
+        },
+        "output": {
+          "wrist_out": {
+            "type": "any",
+            "associated_code": "connectionsIKarms[4]",
+            "connections": []
+          }
+        }
+      },
+      "parameters": {
+        "notes": ""
+      }
+    },
+    {
+      "name": "splineSpineIK",
+      "type": "splineSpineIK",
+      "id": 2202215734592,
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "sockets": {
+        "input": {
+          "scale_in": {
+            "type": "any",
+            "associated_code": "connectionsSpineIK[0]",
+            "connections": []
+          }
+        },
+        "output": {
+          "pelvis_out": {
+            "type": "vector",
+            "associated_code": "connectionsSpineIK[1]",
+            "connections": []
+          },
+          "spineTop_out": {
+            "type": "vector",
+            "associated_code": "connectionsSpineIK[2]",
+            "connections": []
+          }
+        }
+      },
+      "parameters": {
+        "numControlJoints": 3,
+        "numOfJoints": 5,
+        "notes": ""
+      }
+    }
+  ],
+  "connections": [
+    {
+      "start_node": "splineSpineIK",
+      "end_node": "TwoBoneIK",
+      "start_socket": "spineTop_out",
+      "end_socket": "shoulderIK_in",
+      "start_socket_type": "vector",
+      "end_socket_type": "any",
+      "start_associated_code": "connectionsSpineIK[2]",
+      "end_associated_code": "connectionsIKarms[1]"
+    },
+    {
+      "start_node": "splineSpineIK",
+      "end_node": "TwoBoneIK",
+      "start_socket": "spineTop_out",
+      "end_socket": "shoulderFK_in",
+      "start_socket_type": "vector",
+      "end_socket_type": "any",
+      "start_associated_code": "connectionsSpineIK[2]",
+      "end_associated_code": "connectionsIKarms[3]"
+    }
+  ]
+}
