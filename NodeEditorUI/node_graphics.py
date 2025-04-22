@@ -48,6 +48,40 @@ class SocketItem(QtWidgets.QGraphicsEllipseItem):
         """
         return self.mapToScene(self.rect().center())
 
+    def hoverEnterEvent(self, event):
+        """
+        Handle hover enter event for the socket
+
+        Args:
+            event (QtGui.QGraphicsSceneHoverEvent): Hover enter event
+        """
+        color_map = {
+            "input": QtGui.QColor(200, 255, 255),
+            "output": QtGui.QColor(255, 255, 200)
+        }
+        self.setBrush(QtGui.QBrush(color_map.get("input" if self.socket.is_input else "output",
+                                                 QtGui.QColor(100, 100, 100))))
+        
+        
+        #self.setBrush(QtGui.QBrush(QtGui.QColor(255, 255, 255)))
+        #self.setPen(QtGui.QPen(QtGui.QColor(100, 100, 100),3))
+
+    def hoverLeaveEvent(self, event):
+        """
+        Handle hover leave event for the socket
+
+        Args:
+            event (QtGui.QGraphicsSceneHoverEvent): Hover leave event
+        """
+        color_map = {
+            "input": QtGui.QColor(130, 200, 220),
+            "output": QtGui.QColor(220, 200, 130)
+        }
+        self.setBrush(QtGui.QBrush(color_map.get("input" if self.socket.is_input else "output",
+                                                 QtGui.QColor(100, 100, 100))))
+        self.setPen(QtGui.QPen(QtCore.Qt.NoPen))
+        
+
 
 class ConnectionLine(QtWidgets.QGraphicsLineItem):
     """
@@ -122,7 +156,7 @@ class ConnectionLine(QtWidgets.QGraphicsLineItem):
         # Remove connection from data manager
         self.data_manager.remove_connection(self.start_socket, self.end_socket)
 
-    
+
 class CutLine(QtWidgets.QGraphicsLineItem):
     """
     Graphical representation of a cut line for removing connections

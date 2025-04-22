@@ -185,6 +185,11 @@ class BaseNode():
         self.output_sockets[name] = socket
         return socket
 
+
+
+
+###### Modules ######
+
 class Control(BaseNode):
     def __init__(self, name):
         super().__init__(
@@ -255,6 +260,7 @@ class TwoBoneIK(BaseNode):
 
         # Add default parameters
         self.twistJoints = "0"
+        self.addon = "None"
 
         # Create a proxy widget for twist joints
         self.controlWidget = QtWidgets.QWidget()
@@ -267,13 +273,26 @@ class TwoBoneIK(BaseNode):
         self.twistJointsCombo.setCurrentText(str(self.twistJoints))
         self.twistJointsCombo.currentTextChanged.connect(self._update_twist_joints)
 
+         # Create addon selection
+        self.addonLabel = QtWidgets.QLabel("Add-ons:")
+        self.addonCombo = QtWidgets.QComboBox()
+        self.addonCombo.addItems(["None", "SquashAndStretch"])
+        self.addonCombo.setCurrentText(str(self.addon))
+        self.addonCombo.currentTextChanged.connect(self._update_addon)
+
         # Add widgets to layout
         self.controlLayout.addWidget(self.twistJointsLabel)
         self.controlLayout.addWidget(self.twistJointsCombo)
+        self.controlLayout.addWidget(self.addonLabel)
+        self.controlLayout.addWidget(self.addonCombo)
 
     def _update_twist_joints(self, value):
         """Update the number of twist joints"""
         self.twistJoints = int(value)
+
+    def _update_addon(self, value):
+        """Update the addon selection"""
+        self.addon = str(value)
 
 class splineSpineIK(BaseNode):
     def __init__(self, name):
@@ -291,6 +310,7 @@ class splineSpineIK(BaseNode):
         # Add default parameters
         self.numControlJoints = 3
         self.numJoints = 5
+        self.addon = "None"
 
         # Create a proxy widget for controls
         self.controlWidget = QtWidgets.QWidget()
@@ -310,12 +330,21 @@ class splineSpineIK(BaseNode):
         self.jointsSpinBox.setMaximum(999)
         self.jointsSpinBox.setValue(self.numJoints)
         self.jointsSpinBox.valueChanged.connect(self._update_joints)
+
+        # Create addon selection
+        self.addonLabel = QtWidgets.QLabel("Add-ons:")
+        self.addonCombo = QtWidgets.QComboBox()
+        self.addonCombo.addItems(["None", "SquashAndStretch"])
+        self.addonCombo.setCurrentText(str(self.addon))
+        self.addonCombo.currentTextChanged.connect(self._update_addon)
         
         # Add widgets to layout
         self.controlLayout.addWidget(self.controlJointsLabel)
         self.controlLayout.addWidget(self.controlJointsCombo)
         self.controlLayout.addWidget(self.jointsLabel)
         self.controlLayout.addWidget(self.jointsSpinBox)
+        self.controlLayout.addWidget(self.addonLabel)
+        self.controlLayout.addWidget(self.addonCombo)
         
     def _update_control_joints(self, value):
         """Update the number of control joints"""
@@ -324,6 +353,10 @@ class splineSpineIK(BaseNode):
     def _update_joints(self, value):
         """Update the number of joints"""
         self.numJoints = value
+
+    def _update_addon(self, value):
+        """Update the addon selection"""
+        self.addon = str(value)
 
 
 class FKChain(BaseNode):
@@ -392,3 +425,22 @@ class FKChain(BaseNode):
         """Update the control colour"""
         self.controlColour = str(value)
         
+
+
+
+
+
+
+###### Add-Ons ######
+
+class SquashAndStretch(BaseNode):
+    def __init__(self, name):
+        super().__init__(
+            name,
+            input_sockets=[
+                {"name": "temp_in", "socket_type": "any", "associated_code": "temp[0]"}
+            ],
+            output_sockets=[
+                {"name": "squash_and_stretch_out", "socket_type": "any", "associated_code": "temp[0]"}
+            ]
+        )

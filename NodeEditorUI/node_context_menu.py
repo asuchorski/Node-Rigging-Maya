@@ -36,14 +36,14 @@ class NodeContextMenu(QtWidgets.QMenu):
                 "template_method": "template",
                 "rig_method": "twoBoneIK",
                 "template_kwargs": {},
-                "rig_kwargs": {}
+                "rig_kwargs": {"twistJoints" : 0, "addon": "NULL"}
             },
             "splineSpineIK": {
                 "module_name": "splineSpineIK",
                 "template_method": "template",
                 "rig_method": "splineSpineIK",
                 "template_kwargs": {"numControlJoints": 3},
-                "rig_kwargs": {"numControlJoints": 3, "numJoints": 5}
+                "rig_kwargs": {"numControlJoints": 3, "numJoints": 5, "addon": "NULL"}
             },
             "Control": {
                 "module_name": "Control",
@@ -58,17 +58,39 @@ class NodeContextMenu(QtWidgets.QMenu):
                 "rig_method": "FKChain",
                 "template_kwargs": {"numJoints": 3},
                 "rig_kwargs": {"Control": "circle", "Colour": "red", "numJoints": 3}
+            },
+
+
+
+            "squashAndStretch": {
+                "module_name": "addon_SquashAndStretch",
+                "template_method": "template",
+                "rig_method": "addon_SquashAndStretch",
+                "template_kwargs": {},
+                "rig_kwargs": {}
             }
         }
         
+        # If this is a twoBoneIK node, update the module map with user inputs
+        if type(self.node_item.node_instance).__name__ == "TwoBoneIK":
+            twistJoints = self.node_item.node_instance.twistJoints
+            addon = self.node_item.node_instance.addon
+            
+
+            self.module_map["TwoBoneIK"]["rig_kwargs"]["twistJoints"] = twistJoints
+            self.module_map["TwoBoneIK"]["rig_kwargs"]["addon"] = addon
+            
+
         # If this is a splineSpineIK node, update the module map with user inputs
         if type(self.node_item.node_instance).__name__ == "splineSpineIK":
             numControlJoints = self.node_item.node_instance.numControlJoints
             numJoints = self.node_item.node_instance.numJoints
+            addon = self.node_item.node_instance.addon
             
             self.module_map["splineSpineIK"]["template_kwargs"]["numControlJoints"] = numControlJoints
             self.module_map["splineSpineIK"]["rig_kwargs"]["numControlJoints"] = numControlJoints
             self.module_map["splineSpineIK"]["rig_kwargs"]["numJoints"] = numJoints
+            self.module_map["splineSpineIK"]["rig_kwargs"]["addon"] = addon
 
         # If this is a Control node, update the module map with user inputs
         if type(self.node_item.node_instance).__name__ == "Control":

@@ -1,9 +1,11 @@
 import math
 from PySide2 import QtWidgets, QtCore, QtGui
+from PySide2.QtWidgets import QSizePolicy
 
 from node_navigation import NodeNavigation
 from node_graphics import SocketItem, ConnectionLine, CutLine
 from node_item import NodeItem
+from node_addon import NodeAddon
 from node_node import *
 
 class NodeEditor(NodeNavigation):
@@ -11,17 +13,24 @@ class NodeEditor(NodeNavigation):
     Main node editor view with navigation and grid background
     """
 
-    def __init__(self, parent=None):
+    def __init__(self, parent_layout, parent=None):
         """
         Initialize the node editor
 
         Args:
+            parent_layout (QtWidgets.QLayout): Parent layout to add the node editor to
             parent (QtWidgets.QWidget, optional): Parent widget
         """
         super().__init__(parent)
 
         # Setup scene
         self.setScene(QtWidgets.QGraphicsScene(self))
+
+        # Set the size policy to expand horizontally and vertically
+        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+
+        # Add the node editor to the parent layout
+        parent_layout.addWidget(self)
 
         # Grid configuration
         self.gridSize = 50  # Size of small grid squares
@@ -207,7 +216,7 @@ class NodeEditor(NodeNavigation):
             items_to_remove = self.scene().selectedItems()
 
             for item in items_to_remove:
-                if isinstance(item, NodeItem):
+                if isinstance(item, NodeItem or NodeAddon):
                     # Remove only the connections specifically for this node's sockets
                     for socket in list(item.node_instance.input_sockets.values()) + \
                                   list(item.node_instance.output_sockets.values()):

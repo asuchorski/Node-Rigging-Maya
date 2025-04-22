@@ -4,7 +4,7 @@ import importlib
 import maya.cmds as cmds # type: ignore
 
 # Absolute path to the script modules
-script_path = r"C:\\Users\\Asuch\\Desktop\\RiggingTool"
+script_path = r"C:\\Users\\Asuch\\Desktop\\RiggingTool\\RiggingModules"
 
 if script_path not in sys.path:
     sys.path.append(script_path)
@@ -40,10 +40,14 @@ if not cmds.objExists("RIG_GRP_ALL"):
 #splineSpineIK.template(identifier = "NULL", numControlJoints=3)
 #connectionsSpineIK = splineSpineIK.splineSpineIK(identifier= "NULL", numControlJoints=3, numJoints=5)
 
-import Control
-importlib.reload(Control)
-Control.template(identifier = "NULL")
-connectionsControl = Control.Control(control = "circle", identifier= "NULL")
+#import Control
+#importlib.reload(Control)
+#Control.template(identifier = "NULL")
+#connectionsControl = Control.Control(control = "circle", identifier= "NULL")
+
+import addon_SquashAndStretch
+importlib.reload(addon_SquashAndStretch)
+addon_SquashAndStretch.addon_SquashAndStretch(envChain=[], fkChain=[], ikChain=[], switch=0, ikCurve = "spineCurve_TEMP_04_SSIKTEMP4_Spine_IK_SSIK4_Spine", identifier = "NULL")
 
 
 

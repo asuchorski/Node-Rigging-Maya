@@ -1,5 +1,6 @@
 import maya.cmds as cmds # type: ignore
 
+from addon_SquashAndStretch import addon_SquashAndStretch
 from functionality import importer, templateImporter, createOffsetGrp, matchTransform, createGroup, createJoints, constraintJointChains, createFKControls, setupIKFKSwitch, setupIKFKVisibility, lockAttributes, subdivideJointChain, snapJointsToCurve, createSplineIK, addTwistToSpline
 from storeObjectsInJSON import loadGeneratedObjects, cleanSpecificList, addObjectToList
 
@@ -11,7 +12,7 @@ def template(numControlJoints=3, identifier="NULL"):
     templateImporter("Scenes\\Templates\\splineSpineIK" + "_0" + str(numControlJoints) +".ma", key)
     #cmds.parent(template[0], "RIG_TEMP_GRP_ALL")
 
-def splineSpineIK(numControlJoints=3, identifier="NULL", numJoints = 5):
+def splineSpineIK(numControlJoints=3, identifier="NULL", numJoints = 5, addon = "NULL"):
     cmds.select(clear=True)
     tempKey = "SSIKTEMP"
     # Adding the numControls at the end to determine the correct group to look through
@@ -140,8 +141,23 @@ def splineSpineIK(numControlJoints=3, identifier="NULL", numJoints = 5):
     ### Ins: Are like the driven, they are being controlled by the outputs
 
     scale_in = splineSpineIKRigGrp
+    addon_in = {
+        "ikChain" : ikJoints,
+        "fkChain" : fkJoints,
+        "envChain" : envJoints,
+        "switch" : switchControl,
+        "ikCurve" : duplicatedCurve
+    }
 
     pelvis_out = envJoints[0]
     spineTop_out = envJoints[-1]
 
-    return scale_in, pelvis_out, spineTop_out, key
+
+    ### Add-ons ###
+    # If an addon is added, determine which one and call the corresponding function
+    scaleAxis = "Y"
+    if addon == "SquashAndStretch":
+        addon_SquashAndStretch(ikJoints, fkJoints, envJoints, switchControl, duplicatedCurve, scaleAxis, identifier)
+
+
+    return scale_in, pelvis_out, spineTop_out, addon_in, key

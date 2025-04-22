@@ -14,6 +14,8 @@ import node_editor
 importlib.reload(node_editor)
 import node_item
 importlib.reload(node_item)
+import node_addon
+importlib.reload(node_addon)
 import node_navigation
 importlib.reload(node_navigation)
 import node_node

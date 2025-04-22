@@ -1,4 +1,5 @@
 import maya.cmds as cmds  # type: ignore
+from addon_SquashAndStretch import addon_SquashAndStretch
 from functionality import importer, templateImporter, createOffsetGrp, matchTransform, createGroup, createJoints, constraintJointChains, createFKControls, setupIKFKSwitch, setupIKFKVisibility, lockAttributes
 from storeObjectsInJSON import loadGeneratedObjects, cleanSpecificList, addObjectToList
 
@@ -10,7 +11,7 @@ def template(identifier = "NULL"):
     templateImporter("Scenes\\Templates\\twoBoneIK.ma", key)
 
 # Creates a two bone IK setup
-def twoBoneIK(identifier = "NULL"):
+def twoBoneIK(twistJoints = 0, addon = "NULL", identifier = "NULL"):
     cmds.select(clear=True)
 
     # Define the key that will be used in every object created by the code to identifiy it
@@ -26,8 +27,11 @@ def twoBoneIK(identifier = "NULL"):
     fkJoints = []
     envJoints = []
     locatorPositions = {}
+    
 
     cleanSpecificList(key)  # Clean any existing objects in the 'twoBoneIK' list
+
+    ikArmsCurve = "ArmIK_Curve_" + tempKey
 
     # IK Joints
     jointsIK = createJoints(jointNames=ikJointNames, joints=ikJoints, locators=locators, locatorPositions=locatorPositions, key=key)[0]
@@ -67,6 +71,40 @@ def twoBoneIK(identifier = "NULL"):
     poleVector = cmds.poleVectorConstraint(poleVectorControl, ikHandle)[0]
     addObjectToList(key, poleVector)
 
+    # Create curve and the clusters for each cv parenting the last cv to arm control so the curve stretches but doesnt compress
+    duplicatedCurve = cmds.duplicate(ikArmsCurve, name=ikArmsCurve + "_IK_" + key)[0]
+    cmds.parent(duplicatedCurve, world=True)
+    cmds.setAttr(duplicatedCurve + ".template", 0)
+    addObjectToList(key, duplicatedCurve)
+
+    duplicatedCurveShape = cmds.listRelatives(duplicatedCurve, shapes=True)[0]
+
+    curveClusters = []
+
+    # Cluster 1: CVs 0 and 1
+    cluster1 = cmds.cluster(f"{duplicatedCurveShape}.cv[0]", f"{duplicatedCurveShape}.cv[1]",
+                            name=f"{duplicatedCurve}_cluster1")[1]
+    cmds.parentConstraint(poleVectorControl, cluster1, maintainOffset=True)
+    cmds.setAttr(f"{cluster1}.visibility", 0)
+    curveClusters.append(cluster1)
+
+    # Cluster 2: CV 2
+    cluster2 = cmds.cluster(f"{duplicatedCurveShape}.cv[2]",
+                            name=f"{duplicatedCurve}_cluster2")[1]
+    cmds.parentConstraint(poleVectorControl, cluster2, maintainOffset=True)
+    cmds.setAttr(f"{cluster2}.visibility", 0)
+    curveClusters.append(cluster2)
+
+    # Cluster 3: CVs 3 and 4
+    cluster3 = cmds.cluster(f"{duplicatedCurveShape}.cv[3]", f"{duplicatedCurveShape}.cv[4]",
+                            name=f"{duplicatedCurve}_cluster3")[1]
+    cmds.parentConstraint(armControl, cluster3, maintainOffset=True)
+    cmds.setAttr(f"{cluster3}.visibility", 0)
+    curveClusters.append(cluster3)
+
+            
+
+
     # IK-FK switching visibility
     setupIKFKVisibility(fkControls=fkControls, ikControls=[armControl, poleVectorControl], switchCtrl=switchControl, key=key)
 
@@ -93,6 +131,11 @@ def twoBoneIK(identifier = "NULL"):
     cmds.parent(fkControlGroup, controlGroup)
     cmds.parent(switchOffsetGrp, controlGroup)
 
+    curveGroup = createGroup("curve", key)
+    cmds.parent(curveClusters, curveGroup)
+    cmds.parent(duplicatedCurve, curveGroup)
+    cmds.parent(curveGroup, twoBoneIKGrp)
+
     ## Parent to base groups ##
 
     cmds.parent(twoBoneIKGrp, "RIG_GRP_ALL")
@@ -112,5 +155,11 @@ def twoBoneIK(identifier = "NULL"):
     scale_in = twoBoneIKGrp
 
     wrist_out = envJoitns[-1]
+
+    ### Add-ons ###
+    # If an addon is added, determine which one and call the corresponding function
+    scaleAxis = "X"
+    if addon == "SquashAndStretch":
+        addon_SquashAndStretch(jointsIK, fkJoints, envJoitns, switchControl, duplicatedCurve, scaleAxis, identifier)
 
     return scale_in, shoulderIK_in, poleVectorIK_in, shoulderFK_in, wrist_out, key

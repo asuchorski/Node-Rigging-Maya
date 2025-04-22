@@ -10,7 +10,7 @@ from node_context_menu import NodeContextMenu
 from node_node import *
 from node_data_manager import NodeDataManager
 
-class NodeItem(QtWidgets.QGraphicsRectItem):
+class NodeAddon(QtWidgets.QGraphicsRectItem):
     """
     Graphical representation of a node
     """
@@ -27,7 +27,7 @@ class NodeItem(QtWidgets.QGraphicsRectItem):
             scene (QtWidgets.QGraphicsScene, optional): Scene to check for unique names
         """
         # Default dimensions
-        width, height = 250, 300
+        width, height = 180, 100
 
         super().__init__(x, y, width, height)
 
@@ -47,7 +47,7 @@ class NodeItem(QtWidgets.QGraphicsRectItem):
         print(f"Added node {self.node_instance.name} to temporary JSON")
 
         # Node styling
-        self.setBrush(QtGui.QBrush(QtGui.QColor(80, 80, 80)))
+        self.setBrush(QtGui.QBrush(QtGui.QColor(70, 70, 70)))
         self.setFlags(
             QtWidgets.QGraphicsItem.ItemIsMovable |
             QtWidgets.QGraphicsItem.ItemIsSelectable |
@@ -66,7 +66,7 @@ class NodeItem(QtWidgets.QGraphicsRectItem):
                 color: white;
                 border: 0px solid #303030;
                 padding: 2px;
-                min-width: 233px;
+                min-width: 165px;
             }
             QPushButton:hover {
                 background-color: #606060;
@@ -81,7 +81,7 @@ class NodeItem(QtWidgets.QGraphicsRectItem):
         # Add a identification bar across the bottom of the node
         self.bottom_bar = QtWidgets.QGraphicsRectItem(self)
         self.bottom_bar.setRect(0, self.rect().height() - 20, self.rect().width(), 20)
-        self.bottom_bar.setBrush(QtGui.QBrush(QtGui.QColor(60, 50, 145)))
+        self.bottom_bar.setBrush(QtGui.QBrush(QtGui.QColor(145, 60, 50)))
         self.bottom_bar.setPen(QtGui.QPen(QtCore.Qt.NoPen))
         
         # Connect to Maya's native dialog
@@ -90,43 +90,6 @@ class NodeItem(QtWidgets.QGraphicsRectItem):
         # Store notes in the node instance
         if not hasattr(self.node_instance, 'notes'):
             self.node_instance.notes = ""
-
-
-
-        ###### Modules ######
-
-        # Check if this is a splineSpineIK node and add specific UI controls
-        if isinstance(self.node_instance, splineSpineIK) and hasattr(self.node_instance, 'controlWidget'):
-            # Create a proxy for the spineIK controls
-            self.spine_controls_proxy = QtWidgets.QGraphicsProxyWidget(self)
-            self.spine_controls_proxy.setWidget(self.node_instance.controlWidget)
-            self.spine_controls_proxy.setPos(5, 70)  # Position below the rename button
-            self.setBrush(QtGui.QBrush(QtGui.QColor(68, 68, 68)))
-
-        # Check if this is a Control node and add specific UI controls
-        if isinstance(self.node_instance, Control) and hasattr(self.node_instance, 'controlWidget'):
-            # Create a proxy for the Control controls
-            self.control_controls_proxy = QtWidgets.QGraphicsProxyWidget(self)
-            self.control_controls_proxy.setWidget(self.node_instance.controlWidget)
-            self.control_controls_proxy.setPos(5, 70)  # Position below the rename button
-            self.setBrush(QtGui.QBrush(QtGui.QColor(68, 68, 68)))
-
-        # Check if this is a TwoBoneIK node and add specific UI controls
-        if isinstance(self.node_instance, TwoBoneIK) and hasattr(self.node_instance, 'controlWidget'):
-            # Create a proxy for the Control controls
-            self.twist_controls_proxy = QtWidgets.QGraphicsProxyWidget(self)
-            self.twist_controls_proxy.setWidget(self.node_instance.controlWidget)
-            self.twist_controls_proxy.setPos(5, 70)  # Position below the rename button
-            self.setBrush(QtGui.QBrush(QtGui.QColor(68, 68, 68)))
-
-        # Check if this is a FKChain node and add specific UI controls
-        if isinstance(self.node_instance, FKChain) and hasattr(self.node_instance, 'controlWidget'):
-            # Create a proxy for the Control controls
-            self.fkChain_controls_proxy = QtWidgets.QGraphicsProxyWidget(self)
-            self.fkChain_controls_proxy.setWidget(self.node_instance.controlWidget)
-            self.fkChain_controls_proxy.setPos(5, 70)  # Position below the rename button
-            self.setBrush(QtGui.QBrush(QtGui.QColor(68, 68, 68)))
-
         
         ###### Add-Ons ######
 
@@ -178,7 +141,7 @@ class NodeItem(QtWidgets.QGraphicsRectItem):
         existing_names = [
             item.node_instance.name
             for item in self.scene().items()
-            if isinstance(item, NodeItem) and item != self
+            if isinstance(item, NodeAddon) and item != self
         ]
 
         # If name already exists, append a number
@@ -194,7 +157,7 @@ class NodeItem(QtWidgets.QGraphicsRectItem):
         """
         Generate a unique name for the node in the given scene
         """
-        # Get the current class type (since NodeItem is now imported)
+        # Get the current class type (since NodeAddon is now imported)
         node_item_class = self.__class__
         
         # Function to check if a node name exists in the scene
@@ -227,8 +190,8 @@ class NodeItem(QtWidgets.QGraphicsRectItem):
 
         for i, socket in enumerate(input_sockets, 1):
             SocketItem(
-                self.rect().left() - 10,
-                self.pos().y() + input_spacing * i,
+                self.pos().y() + 75,
+                self.rect().x() + 100,
                 socket,
                 self
             )
@@ -239,8 +202,8 @@ class NodeItem(QtWidgets.QGraphicsRectItem):
 
         for i, socket in enumerate(output_sockets, 1):
             SocketItem(
-                self.rect().right() - 10,
-                self.pos().y() + output_spacing * i,
+                self.pos().y() + 75,
+                self.pos().x() - 25,
                 socket,
                 self
             )
