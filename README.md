@@ -1,5 +1,6 @@
 # Node-Rigging-Maya
-A node based modular rigging tool for Maya written in Python. UI implemented using PYQt (In-Progress)
+Currently in progress
+A node based modular rigging tool for Maya written in Python. UI implemented using PYQt
 
 + ![image missing](Imgs/Node_UI.png)
 Create the rig in a modular node based way
