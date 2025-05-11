@@ -27,7 +27,7 @@ class NodeItem(QtWidgets.QGraphicsRectItem):
             scene (QtWidgets.QGraphicsScene, optional): Scene to check for unique names
         """
         # Default dimensions
-        width, height = 250, 300
+        width, height = 250, 400
 
         super().__init__(x, y, width, height)
 
@@ -77,6 +77,8 @@ class NodeItem(QtWidgets.QGraphicsRectItem):
         self.button_proxy = QtWidgets.QGraphicsProxyWidget(self)
         self.button_proxy.setWidget(self.input_button)
         self.button_proxy.setPos(5, 30)
+
+        
 
         # Add a identification bar across the bottom of the node
         self.bottom_bar = QtWidgets.QGraphicsRectItem(self)

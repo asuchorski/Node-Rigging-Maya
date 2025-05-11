@@ -4,6 +4,7 @@ import sys
 
 # Add the script path BEFORE importing
 script_path = r"C:\\Users\\Asuch\\Desktop\\RiggingTool\\RiggingModules"
+image_path = r"C:\\Users\\Asuch\\Desktop\\RiggingTool\\Imgs\\"
 if script_path not in sys.path:
     sys.path.append(script_path)
 
@@ -229,11 +230,17 @@ class Control(BaseNode):
         self.controlColourCombo.setCurrentText(str(self.controlColour))
         self.controlColourCombo.currentTextChanged.connect(self._update_control_colour)
 
+        # Create an image label for the control node
+        self.image_label = QtWidgets.QLabel()
+        self.image_label.setPixmap(QtGui.QPixmap(image_path + "control.png"))
+
         # Add widgets to layout
         self.controlLayout.addWidget(self.controlColourLabel)
         self.controlLayout.addWidget(self.controlColourCombo)
         self.controlLayout.addWidget(self.controlShapeLabel)
         self.controlLayout.addWidget(self.controlShapeCombo)
+        self.controlLayout.addWidget(self.image_label)
+
 
     def _update_control_shape(self, value):
         """Update the control shape"""
@@ -280,11 +287,16 @@ class TwoBoneIK(BaseNode):
         self.addonCombo.setCurrentText(str(self.addon))
         self.addonCombo.currentTextChanged.connect(self._update_addon)
 
+        # Create an image label for the control node
+        self.image_label = QtWidgets.QLabel()
+        self.image_label.setPixmap(QtGui.QPixmap(image_path + "armik.png"))
+
         # Add widgets to layout
         self.controlLayout.addWidget(self.twistJointsLabel)
         self.controlLayout.addWidget(self.twistJointsCombo)
         self.controlLayout.addWidget(self.addonLabel)
         self.controlLayout.addWidget(self.addonCombo)
+        self.controlLayout.addWidget(self.image_label)
 
     def _update_twist_joints(self, value):
         """Update the number of twist joints"""
@@ -337,6 +349,10 @@ class splineSpineIK(BaseNode):
         self.addonCombo.addItems(["None", "SquashAndStretch"])
         self.addonCombo.setCurrentText(str(self.addon))
         self.addonCombo.currentTextChanged.connect(self._update_addon)
+
+        # Create an image label for the splineSpineIK node
+        self.image_label = QtWidgets.QLabel()
+        self.image_label.setPixmap(QtGui.QPixmap(image_path + "spinesplineik.png"))
         
         # Add widgets to layout
         self.controlLayout.addWidget(self.controlJointsLabel)
@@ -345,6 +361,8 @@ class splineSpineIK(BaseNode):
         self.controlLayout.addWidget(self.jointsSpinBox)
         self.controlLayout.addWidget(self.addonLabel)
         self.controlLayout.addWidget(self.addonCombo)
+        self.controlLayout.addWidget(self.image_label)
+        
         
     def _update_control_joints(self, value):
         """Update the number of control joints"""
@@ -404,6 +422,10 @@ class FKChain(BaseNode):
         self.controlColourCombo.addItems(["red", "yellow", "blue", "orange", "light blue", "green"])
         self.controlColourCombo.setCurrentText(str(self.controlColour))
         self.controlColourCombo.currentTextChanged.connect(self._update_control_colour)
+
+        # Create an image label for the control node
+        self.image_label = QtWidgets.QLabel()
+        self.image_label.setPixmap(QtGui.QPixmap(image_path + "fkchain.png"))
         
         # Add widgets to layout
         self.controlLayout.addWidget(self.jointsLabel)
@@ -412,6 +434,7 @@ class FKChain(BaseNode):
         self.controlLayout.addWidget(self.controlColourCombo)
         self.controlLayout.addWidget(self.controlShapeLabel)
         self.controlLayout.addWidget(self.controlShapeCombo)
+        self.controlLayout.addWidget(self.image_label)
         
     def _update_joints(self, value):
         """Update the number of control joints"""
