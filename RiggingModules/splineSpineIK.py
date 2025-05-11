@@ -1,4 +1,5 @@
 import maya.cmds as cmds # type: ignore
+from PySide2 import QtWidgets, QtGui
 
 from addon_SquashAndStretch import addon_SquashAndStretch
 from functionality import importer, templateImporter, createOffsetGrp, matchTransform, createGroup, createJoints, constraintJointChains, createFKControls, setupIKFKSwitch, setupIKFKVisibility, lockAttributes, subdivideJointChain, snapJointsToCurve, createSplineIK, addTwistToSpline
