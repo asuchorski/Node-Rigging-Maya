@@ -447,11 +447,50 @@ class FKChain(BaseNode):
     def _update_control_colour(self, value):
         """Update the control colour"""
         self.controlColour = str(value)
+
+
+class foot(BaseNode):
+    def __init__(self, name):
+        super().__init__(
+            name,
+            input_sockets=[
+                {"name": "scale_in", "socket_type": "any", "associated_code": "connectionsfoot[0]"},
+                {"name": "ankle_in", "socket_type": "any", "associated_code": "connectionsfoot[1]"},
+                {"name": "ball_in", "socket_type": "any", "associated_code": "connectionsfoot[2]"},
+                {"name": "toe_in", "socket_type": "any", "associated_code": "connectionsfoot[3]"}
+            ],
+            output_sockets=[
+                {"name": "toe_out", "socket_type": "any", "associated_code": "connectionsfoot[4]"}
+            ]
+        )
+
+        # Add default parameters
+        self.addon = "None"
+
+        # Create a proxy widget for twist joints
+        self.controlWidget = QtWidgets.QWidget()
+        self.controlLayout = QtWidgets.QVBoxLayout(self.controlWidget)
+
+         # Create addon selection
+        self.addonLabel = QtWidgets.QLabel("Add-ons:")
+        self.addonCombo = QtWidgets.QComboBox()
+        self.addonCombo.addItems(["None", "SquashAndStretch"])
+        self.addonCombo.setCurrentText(str(self.addon))
+        self.addonCombo.currentTextChanged.connect(self._update_addon)
+
+        # Create an image label for the control node
+        self.image_label = QtWidgets.QLabel()
+        self.image_label.setPixmap(QtGui.QPixmap(image_path + "foot.png"))
+
+        # Add widgets to layout
+        self.controlLayout.addWidget(self.addonLabel)
+        self.controlLayout.addWidget(self.addonCombo)
+        self.controlLayout.addWidget(self.image_label)
+
+    def _update_addon(self, value):
+        """Update the addon selection"""
+        self.addon = str(value)
         
-
-
-
-
 
 
 ###### Add-Ons ######

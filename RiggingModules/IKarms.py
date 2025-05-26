@@ -8,6 +8,7 @@ generatedObjects = loadGeneratedObjects()  # Load existing data from JSON file a
 def template(identifier = "NULL"):
     key = "TBIKTEMP_" + identifier
     cleanSpecificList(key)
+    print(key)
     templateImporter("Scenes\\Templates\\twoBoneIK.ma", key)
 
 # Creates a two bone IK setup

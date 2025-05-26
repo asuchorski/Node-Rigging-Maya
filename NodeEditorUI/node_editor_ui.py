@@ -39,7 +39,7 @@ class NodeEditorUI(QtWidgets.QDialog):
         self.modules_title = QtWidgets.QLabel("Modules")
         self.modules_title.setStyleSheet("font-weight: bold;")
         self.modules_list = QtWidgets.QListWidget()
-        self.modules_list.addItems(["TwoBoneIK", "splineSpineIK", "Control", "FKChain"])
+        self.modules_list.addItems(["TwoBoneIK", "splineSpineIK", "Control", "FKChain", "foot"])
         self.modules_list.itemDoubleClicked.connect(self.add_node)
 
         self.modules_scroll_area = QtWidgets.QScrollArea()
@@ -171,7 +171,8 @@ class NodeEditorUI(QtWidgets.QDialog):
             "TwoBoneIK": TwoBoneIK,
             "splineSpineIK": splineSpineIK,
             "Control": Control,
-            "FKChain": FKChain
+            "FKChain": FKChain,
+            "foot": foot
         }
         node_class = node_class_map.get(item.text(), BaseNode)
         node = NodeItem(0, 0, node_class, scene=self.node_editor.scene())

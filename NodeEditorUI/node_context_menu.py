@@ -59,7 +59,13 @@ class NodeContextMenu(QtWidgets.QMenu):
                 "template_kwargs": {"numJoints": 3},
                 "rig_kwargs": {"Control": "circle", "Colour": "red", "numJoints": 3}
             },
-
+            "foot": {
+                "module_name": "foot",
+                "template_method": "template",
+                "rig_method": "foot",
+                "template_kwargs": {},
+                "rig_kwargs": {"addon": "NULL"}
+            },
 
 
             "squashAndStretch": {
@@ -111,6 +117,12 @@ class NodeContextMenu(QtWidgets.QMenu):
             self.module_map["FKChain"]["rig_kwargs"]["Control"] = controlShape
             self.module_map["FKChain"]["rig_kwargs"]["Colour"] = controlColour
             self.module_map["FKChain"]["rig_kwargs"]["numJoints"] = numJoints
+
+        # If this is a foot node, update the module map with user inputs
+        if type(self.node_item.node_instance).__name__ == "foot":
+            addon = self.node_item.node_instance.addon
+            
+            self.module_map["foot"]["rig_kwargs"]["addon"] = addon
             
 
         # Create actions
@@ -285,7 +297,7 @@ class NodeContextMenu(QtWidgets.QMenu):
                         try:
                             # Evaluate the associated code in the context of the returned connections
                             actual_item_name = eval(socket.associated_code, {"__builtins__": None}, 
-                                                   {"connectionsIKarms": connections, "connectionsSpineIK": connections, "connectionsControl": connections, "connectionsFKChain": connections})
+                                                   {"connectionsIKarms": connections, "connectionsSpineIK": connections, "connectionsControl": connections, "connectionsFKChain": connections, "connectionsfoot": connections})
                             
                             # Update the socket's associated code with the actual Maya item name
                             socket.associated_code = actual_item_name
@@ -298,7 +310,7 @@ class NodeContextMenu(QtWidgets.QMenu):
                         try:
                             # Evaluate the associated code in the context of the returned connections
                             actual_item_name = eval(socket.associated_code, {"__builtins__": None}, 
-                                                   {"connectionsIKarms": connections, "connectionsSpineIK": connections, "connectionsControl": connections, "connectionsFKChain": connections})
+                                                   {"connectionsIKarms": connections, "connectionsSpineIK": connections, "connectionsControl": connections, "connectionsFKChain": connections, "connectionsfoot": connections})
                             
                             # Update the socket's associated code with the actual Maya item name
                             socket.associated_code = actual_item_name

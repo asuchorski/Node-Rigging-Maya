@@ -129,6 +129,15 @@ class NodeItem(QtWidgets.QGraphicsRectItem):
             self.fkChain_controls_proxy.setPos(5, 70)  # Position below the rename button
             self.setBrush(QtGui.QBrush(QtGui.QColor(68, 68, 68)))
 
+            # Check if this is a foot node and add specific UI controls
+        if isinstance(self.node_instance, foot) and hasattr(self.node_instance, 'controlWidget'):
+            # Create a proxy for the Control controls
+            self.fkChain_controls_proxy = QtWidgets.QGraphicsProxyWidget(self)
+            self.fkChain_controls_proxy.setWidget(self.node_instance.controlWidget)
+            self.fkChain_controls_proxy.setPos(5, 70)  # Position below the rename button
+            self.setBrush(QtGui.QBrush(QtGui.QColor(68, 68, 68)))
+
+
         
         ###### Add-Ons ######
 

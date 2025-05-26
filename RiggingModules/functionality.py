@@ -106,44 +106,49 @@ def matchTransform(source, target, transOffset=[0, 0, 0], rotOffset=[0,0,0]):
     cmds.xform(source, worldSpace=True, translation=newPos, rotation=newRot)
     cmds.makeIdentity(source, apply=True, translate=True, rotate=True, scale=True, normal=False)
 
-# Imports the template for a rig module for the user to position
+# Imports the rigging module templates and cleans stuff up, like parenting etc
 def templateImporter(item, key):
     newNodes = []
     wholePath = os.path.join(USER_SCENE_PATH, item)
-    
-    # Import the file and get the imported nodes
-    importedNodes = cmds.file(wholePath, i=True, type="mayaAscii", mergeNamespacesOnClash=False, returnNewNodes=True)
 
-    baseNodeNames = [node.split('|')[-1] for node in importedNodes]
+    # Get all top-level nodes before import
+    beforeTopNodes = set(cmds.ls(assemblies=True))
 
-    # Loop through the file and rename each node adding the key suffix identifier
-    for node in baseNodeNames:
+    # Get all nodes before import (for renaming purposes)
+    beforeAllNodes = set(cmds.ls(l=True))
 
-        if node.endswith("Shape"):
-            continue
+    # Import the file
+    cmds.file(wholePath, i=True, type="mayaAscii", mergeNamespacesOnClash=False)
 
-        if node.endswith("Orig"):
-            continue
+    # Get top-level nodes after import to find new group(s)
+    afterTopNodes = set(cmds.ls(assemblies=True))
+    importedGroups = list(afterTopNodes - beforeTopNodes)
 
+    # Parent the imported top-level group to RIG_TEMP_GRP_ALL
+    if importedGroups:
+        importedGroup = importedGroups[0]  # assuming only one
+        try:
+            cmds.parent(importedGroup, "RIG_TEMP_GRP_ALL")
+        except Exception as e:
+            print(f"Could not parent {importedGroup} to RIG_TEMP_GRP_ALL: {e}")
+
+    # Get all nodes after import
+    afterAllNodes = set(cmds.ls(l=True))
+    importedNodes = list(afterAllNodes - beforeAllNodes)
+
+    # Rename imported nodes
+    for fullNode in importedNodes:
+        node = fullNode.split('|')[-1]
         newName = node + "_" + key
-        cmds.rename(node, newName)
-        addObjectToList(key, newName)
-        newNodes.append(newName)
+        try:
+            renamed = cmds.rename(node, newName)
+            addObjectToList(key, renamed)
+            newNodes.append(renamed)
+        except Exception:
+            pass
 
-    topGroups = [
-    node for node in newNodes
-    if cmds.objectType(node) == "transform" and not cmds.listRelatives(node, parent=True)
-]
+    return newNodes
 
-    if topGroups:
-        topGroup = topGroups[0]  # Assuming only one topmost group exists
-        print(f"Topmost group found: {topGroup}")
-    else:
-        print("No top-level group found.")
-
-    cmds.parent(topGroups[0], "RIG_TEMP_GRP_ALL")
-
-    return importedNodes
 
 def scaleCompensate(joints):
     for j in joints:
